@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jogo Simples</title>
+  <link rel="stylesheet" href="Style.css" />
+</head>
+<body>
+  <div id="viewport" tabindex="0" aria-label="Área do jogo">
+    <div id="world" role="application" aria-label="Mundo do jogo">
+      <!-- decorativo -->
+      <div class="obj green" style="left:200px;top:140px;width:220px;height:120px"></div>
+      <div class="obj yellow" style="left:900px;top:500px;width:180px;height:180px;border-radius:8px"></div>
+      <div class="obj cyan" style="left:1200px;top:200px;width:160px;height:160px"></div>
+
+      <!-- player -->
+      <div id="player" class="player" aria-label="Personagem">
+        <div class="shadow"></div>
+        <div class="legs" id="legs">
+          <div class="leg" id="leg1"></div>
+          <div class="leg" id="leg2"></div>
+        </div>
+        <div class="eyes" id="eyes">
+          <div class="pupil"></div>
+          <div class="pupil"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="hud">Use WASD ou setas • Pressione R para reset • Andando</div>
+
+  <!-- Toque -->
+  <div class="touch-controls" id="touchControls">
+    <button id="btnUp">▲</button>
+    <button class="invisible" aria-hidden="true"></button>
+    <button id="btnRight">▶</button>
+    <button id="btnLeft">◀</button>
+    <button id="btnDown">▼</button>
+    <button class="invisible" aria-hidden="true"></button>
+  </div>
+
+  <div class="hint">Abra em tela cheia para melhor experiência</div>
+
+  <script src="Script"></script>
+</body>
+</html>

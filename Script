@@ -1,0 +1,133 @@
+(() => {
+  const WORLD = { x: 1600, y: 900 };
+  const SPEED = 220;
+  const TILE = 64;
+  const STEP_TIME = 0.12;
+
+  const viewport = document.getElementById('viewport');
+  const world = document.getElementById('world');
+  const playerEl = document.getElementById('player');
+  const hud = document.getElementById('hud');
+  const leg1 = document.getElementById('leg1');
+  const leg2 = document.getElementById('leg2');
+  const eyes = document.getElementById('eyes');
+
+  const btnUp = document.getElementById('btnUp');
+  const btnDown = document.getElementById('btnDown');
+  const btnLeft = document.getElementById('btnLeft');
+  const btnRight = document.getElementById('btnRight');
+
+  world.style.width = WORLD.x + 'px';
+  world.style.height = WORLD.y + 'px';
+
+  let pos = { x: WORLD.x / 2, y: WORLD.y / 2 };
+  let dir = { x: 0, y: 1 };
+  let moving = false;
+  let paused = false;
+  let frame = 0;
+  let stepAcc = 0;
+  const keys = new Set();
+
+  const addKey = (k) => keys.add(k);
+  const delKey = (k) => keys.delete(k);
+
+  window.addEventListener('keydown', (e) => {
+    const k = e.key.toLowerCase();
+    if (['w','a','s','d','arrowup','arrowleft','arrowdown','arrowright'].includes(k)) {
+      addKey(k); e.preventDefault();
+    }
+    if (k === 'r') resetPosition();
+  }, { passive:false });
+
+  window.addEventListener('keyup', (e) => { delKey(e.key.toLowerCase()); });
+
+  function makeBtn(btn, code) {
+    let pressed = false;
+    const press = (ev) => { ev.preventDefault(); pressed = true; addKey(code); };
+    const release = () => { if (pressed) { pressed = false; delKey(code); } };
+    btn.addEventListener('touchstart', press, { passive:false });
+    btn.addEventListener('touchend', release);
+    btn.addEventListener('mousedown', press);
+    btn.addEventListener('mouseup', release);
+    btn.addEventListener('mouseleave', release);
+  }
+  makeBtn(btnUp, 'arrowup');
+  makeBtn(btnDown, 'arrowdown');
+  makeBtn(btnLeft, 'arrowleft');
+  makeBtn(btnRight, 'arrowright');
+
+  document.addEventListener('visibilitychange', () => {
+    paused = document.hidden;
+    updateHud();
+  });
+
+  function resetPosition() {
+    pos = { x: WORLD.x / 2, y: WORLD.y / 2 };
+    updatePlayerDom();
+  }
+
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+  function updateHud() {
+    hud.textContent = paused ? 'Pausado' : (moving ? 'Andando' : 'Parado') + ' • Use WASD ou setas • Pressione R para reset';
+  }
+
+  function updateCamera() {
+    const vw = viewport.clientWidth, vh = viewport.clientHeight;
+    const cx = clamp(pos.x - vw / 2, 0, Math.max(0, WORLD.x - vw));
+    const cy = clamp(pos.y - vh / 2, 0, Math.max(0, WORLD.y - vh));
+    world.style.transform = `translate(${-cx}px, ${-cy}px)`;
+  }
+
+  function updatePlayerDom() {
+    playerEl.style.left = pos.x + 'px';
+    playerEl.style.top  = pos.y + 'px';
+    const angle = Math.atan2(dir.y, dir.x);
+    eyes.style.transform = `rotate(${angle}rad)`;
+  }
+
+  let last = null;
+  function loop(t) {
+    if (paused) { last = t; requestAnimationFrame(loop); return; }
+    if (last === null) last = t;
+    const dt = Math.min(0.05, (t - last) / 1000);
+    last = t;
+
+    let dx = 0, dy = 0;
+    if (keys.has('w') || keys.has('arrowup')) dy -= 1;
+    if (keys.has('s') || keys.has('arrowdown')) dy += 1;
+    if (keys.has('a') || keys.has('arrowleft')) dx -= 1;
+    if (keys.has('d') || keys.has('arrowright')) dx += 1;
+
+    moving = dx !== 0 || dy !== 0;
+    updateHud();
+
+    if (moving) {
+      const len = Math.hypot(dx, dy) || 1;
+      dx /= len; dy /= len;
+      dir = { x: dx, y: dy };
+      pos.x = clamp(pos.x + dx * SPEED * dt, 16, WORLD.x - 16);
+      pos.y = clamp(pos.y + dy * SPEED * dt, 24, WORLD.y - 24);
+
+      stepAcc += dt;
+      if (stepAcc >= STEP_TIME) { stepAcc = 0; frame = 1 - frame; }
+      const offset = frame === 0 ? 4 : -4;
+      leg1.style.transform = `translateY(${offset}px)`;
+      leg2.style.transform = `translateY(${-offset}px)`;
+    } else {
+      stepAcc = 0; frame = 0;
+      leg1.style.transform = 'translateY(0px)';
+      leg2.style.transform = 'translateY(0px)';
+    }
+
+    updatePlayerDom();
+    updateCamera();
+    requestAnimationFrame(loop);
+  }
+
+  resetPosition();
+  updateHud();
+  requestAnimationFrame(loop);
+  viewport.focus();
+  viewport.addEventListener('click', () => viewport.focus());
+})();

@@ -1,0 +1,49 @@
+:root{
+  --bg:#0f172a;
+  --tile:64px;
+}
+html,body{height:100%;margin:0;}
+body{background:var(--bg);color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;overflow:hidden}
+
+#viewport{position:relative;width:100vw;height:100vh;overflow:hidden;touch-action:none}
+
+#world{
+  position:absolute;left:0;top:0;transform-origin:0 0;
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    radial-gradient(circle at 20% 20%, rgba(0,0,0,0.25), transparent 40%);
+  background-size: var(--tile) var(--tile), var(--tile) var(--tile), 100% 100%;
+}
+/* decorativo */
+.obj{position:absolute;border-radius:12px;filter:brightness(1.05);opacity:0.9}
+.obj.green{background:#059669;}
+.obj.yellow{background:#b45309;}
+.obj.cyan{background:#0891b2;border-radius:50%;filter:blur(8px);opacity:0.6}
+
+/* Player */
+.player{
+  position:absolute;width:48px;height:56px;transform:translate(-50%,-90%);
+  display:flex;align-items:center;justify-content:center;
+  border-radius:12px;background:#fb7185;border:4px solid #fecdd3;
+  box-shadow:0 10px 20px rgba(0,0,0,0.35);
+}
+.shadow{
+  position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;
+  width:40px;height:6px;background:rgba(0,0,0,0.35);border-radius:999px;filter:blur(2px);z-index:-1;
+}
+.legs{position:absolute;bottom:0;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.leg{width:10px;height:20px;background:#be185d;border-radius:4px}
+.eyes{width:32px;height:14px;background:#fff;border-radius:999px;display:flex;gap:6px;align-items:center;justify-content:center}
+.pupil{width:6px;height:6px;background:#000;border-radius:999px}
+
+/* HUD */
+#hud{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:rgba(0,0,0,0.35);backdrop-filter:blur(4px);padding:8px 14px;border-radius:999px;font-size:13px}
+
+/* Touch controls */
+.touch-controls{position:fixed;left:14px;bottom:14px;display:grid;grid-template-columns:repeat(3,56px);gap:8px;z-index:40}
+.touch-controls button{width:56px;height:48px;border-radius:12px;background:rgba(255,255,255,0.9);color:#111;border:0;font-weight:700}
+.touch-controls .invisible{visibility:hidden}
+
+.hint{position:fixed;right:12px;bottom:12px;background:rgba(255,255,255,0.06);padding:8px 10px;border-radius:10px;font-size:13px}
